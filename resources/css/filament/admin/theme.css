@@ -1,0 +1,80 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+@layer components {
+
+    /* Sidebar base */
+    .fi-sidebar-nav, .fi-tenant-menu {
+        @apply bg-white dark:bg-gray-900
+    }
+
+    .fi-tenant-menu{
+        @apply !mt-0 !mx-0 !rounded-none !shadow-none border-b border-gray-200 dark:border-gray-700;
+        &:hover{
+            @apply !rounded-none;
+        }
+    }
+
+    /* Ítem no activo */
+    .fi-sidebar-item:not([data-state="active"]):not(.fi-active) {
+        .fi-sidebar-item-btn {
+            @apply transition-colors duration-200 hover:bg-primary-50
+            dark:hover:bg-primary-900/10 rounded-lg;
+
+            &:hover {
+                .fi-sidebar-item-icon,
+                .fi-sidebar-item-label {
+                    @apply text-primary-600 dark:text-primary-400;
+                }
+            }
+        }
+
+
+    }
+
+    /* Ítem activo — versión completa Filament 4 */
+    .fi-sidebar-item[data-state="active"],
+    .fi-sidebar-item.fi-active {
+        .fi-sidebar-item-btn {
+            @apply bg-primary-600 hover:bg-primary-600 text-white rounded-lg
+            transition-colors duration-200;
+
+            & .fi-sidebar-item-icon,
+            .fi-sidebar-item-label {
+                @apply text-white;
+            }
+        }
+
+
+    }
+
+    /* Colapsable (sidebar compacta) — activo */
+    .fi-sidebar-group[data-collapsed="true"] .fi-sidebar-item[data-state="active"],
+    .fi-sidebar-group[data-collapsed="true"] .fi-sidebar-item.fi-active {
+        button {
+            @apply bg-primary-600 hover:bg-primary-600 text-white rounded-full;
+        }
+
+        .fi-sidebar-item-icon {
+            @apply text-white;
+        }
+    }
+
+    /* Colapsable — hover en iconos */
+    .fi-sidebar-group[data-collapsed="true"] .fi-sidebar-item:not([data-state="active"]) button:hover {
+        @apply bg-primary-50 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400;
+    }
+
+    /* Opcional: transición suave al cambiar */
+    .fi-sidebar-item a,
+    .fi-sidebar-item button {
+        @apply transition-all duration-200 ease-in-out;
+    }
+
+    /* Modal overlay */
+    .fi-modal-close-overlay {
+        @apply backdrop-blur-sm;
+    }
+}
