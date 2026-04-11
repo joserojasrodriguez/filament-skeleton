@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,8 +26,12 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->default()
+            ->passwordReset()
+            ->profile()
+            ->emailVerification(fn (): bool => config('filament.has_email_verification', false))
+            ->emailChangeVerification()
             ->id('admin')
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
@@ -42,6 +49,13 @@ class AdminPanelProvider extends PanelProvider
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
+            ->plugins([
+                FilamentDeveloperLoginsPlugin::make()
+                    ->enabled(app()->environment('local') && config('filament.developer_login_enabled'))
+                    ->users([
+                        'Admin' => 'admin@example.com',
+                    ]),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -56,5 +70,26 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        if (! config('filament.mfa.enabled')) {
+            return $panel;
+        }
+
+        $providers = [];
+
+        if (config('filament.mfa.email')) {
+            $providers[] = EmailAuthentication::make();
+        }
+
+        if (config('filament.mfa.app')) {
+            $providers[] = AppAuthentication::make()
+                ->recoverable()
+                ->recoveryCodeCount(10);
+        }
+
+        return $panel->multiFactorAuthentication(
+            $providers,
+            isRequired: config('filament.mfa.required')
+        );
     }
 }
