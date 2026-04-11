@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\User;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -10,10 +11,12 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -57,6 +60,20 @@ class AdminPanelProvider extends PanelProvider
                     ->users([
                         'Admin' => 'admin@example.com',
                     ]),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Log Viewer')
+                    ->group('Super Admin')
+                    ->url(fn (): string => route('log-viewer.index'))
+                    ->label('Logs')
+                    ->icon(Heroicon::OutlinedNumberedList)
+                    ->visible(fn (): bool => auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)),
+                NavigationItem::make('Horizon')
+                    ->group('Super Admin')
+                    ->url(fn (): string => route('horizon.index'))
+                    ->label('Horizon')
+                    ->icon(Heroicon::CpuChip)
+                    ->visible(fn (): bool => auth()->user()->hasRole(User::ROLE_SUPER_ADMIN)),
             ])
             ->middleware([
                 EncryptCookies::class,
