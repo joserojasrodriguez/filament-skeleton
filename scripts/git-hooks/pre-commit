@@ -1,0 +1,39 @@
+#!/bin/sh
+
+echo "🔍 Buscando código de depuración..."
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.php$' | grep -v '_ide_helper.php')
+
+HAS_DEBUG=false
+
+for file in $FILES; do
+    if grep -E -n '(^|[^a-zA-Z0-9_])(dd|dump|var_dump|die)\s*\(' "$file"; then
+        echo "⚠️  Código de depuración en $file"
+        HAS_DEBUG=true
+    fi
+done
+
+if [ "$HAS_DEBUG" = true ]; then
+    echo "❌ Elimina código de depuración antes de hacer commit"
+    exit 1
+fi
+
+# ===========================
+# 🎨 LARAVEL PINT
+# ===========================
+
+echo "🎨 Ejecutando Pint..."
+
+if [ -f "./vendor/bin/sail" ]; then
+    ./vendor/bin/sail pint
+else
+    ./vendor/bin/pint
+fi
+
+# ===========================
+# 🔁 RE-AÑADIR ARCHIVOS
+# ===========================
+
+git add $FILES
+
+echo "✅ Commit OK"
