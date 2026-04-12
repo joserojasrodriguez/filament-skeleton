@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'backup' => true,
+    'backup' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -68,7 +68,7 @@ return [
     */
 
     'git' => [
-        'enabled' => true,
+        'enabled' => false,
         'commit_message' => 'chore: add Filament localization support',
     ],
 
@@ -126,7 +126,7 @@ return [
     */
 
     'excluded_resources' => [
-        // 'UserResource',
+        'RoleResource',
     ],
 
     /*
