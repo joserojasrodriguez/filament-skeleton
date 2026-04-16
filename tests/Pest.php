@@ -1,6 +1,8 @@
 <?php
 
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 /*
@@ -15,8 +17,13 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
- // ->use(RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
+
+beforeEach(function (): void {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+});
 
 /*
 |--------------------------------------------------------------------------

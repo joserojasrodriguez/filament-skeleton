@@ -13,19 +13,29 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name',
+    'email',
+    'email_verified_at',
+    'password',
+    'is_active',
+    'app_authentication_secret',
+    'app_authentication_recovery_codes',
+    'has_email_authentication',
+])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasEmailAuthentication
 {
     public const ROLE_SUPER_ADMIN = 'super_admin';
 
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, HasUuids, Notifiable;
 
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
