@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Joserojasrodriguez\FilamentDeleteGuard\Contracts\HasPreventDeletion;
+use Joserojasrodriguez\FilamentDeleteGuard\Exceptions\CannotDeleteModelException;
+use Joserojasrodriguez\FilamentDeleteGuard\Traits\InteractsWithPreventDeletion;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
@@ -30,7 +33,7 @@ use Spatie\Permission\Traits\HasRoles;
     'has_email_authentication',
 ])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasEmailAuthentication
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasEmailAuthentication, HasPreventDeletion
 {
     public const ROLE_SUPER_ADMIN = 'super_admin';
 
@@ -40,6 +43,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
     use InteractsWithEmailAuthentication;
+    use InteractsWithPreventDeletion;
 
     /**
      * Get the attributes that should be cast.
@@ -50,12 +54,26 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
+            'is_admin' => 'boolean',
             'password' => 'hashed',
         ];
+    }
+
+    public function isSystemAdmin(): bool
+    {
+        return (bool) $this->is_admin;
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
         return (bool) $this->is_active;
+    }
+
+    public function customDeletionRules(): void
+    {
+        if ($this->hasRole(self::ROLE_SUPER_ADMIN)) {
+            throw CannotDeleteModelException::because('Super admin users cannot be deleted.');
+        }
     }
 }

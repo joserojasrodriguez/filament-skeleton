@@ -77,4 +77,32 @@
     .fi-modal-close-overlay {
         @apply backdrop-blur-sm;
     }
+
+    /* Disabled actions should read as intentionally unavailable */
+    .fi-btn.fi-disabled:not(.fi-force-enabled),
+    .fi-btn[disabled]:not(.fi-force-enabled) {
+        @apply opacity-100 cursor-not-allowed text-gray-400 bg-gray-100 ring-1 ring-gray-200 shadow-none;
+
+        &.fi-color,
+        &:not(.fi-outlined).fi-color {
+            @apply bg-gray-100 text-gray-400;
+
+            & > .fi-icon {
+                @apply text-gray-400;
+            }
+        }
+
+        &.fi-outlined {
+            @apply bg-gray-50 text-gray-400 ring-gray-200;
+        }
+
+        & > .fi-icon {
+            @apply text-gray-400;
+        }
+    }
+
+    .fi-icon-btn.fi-disabled:not(.fi-force-enabled),
+    .fi-icon-btn[disabled]:not(.fi-force-enabled) {
+        @apply opacity-100 cursor-not-allowed text-gray-300 bg-gray-100 ring-1 ring-gray-200;
+    }
 }

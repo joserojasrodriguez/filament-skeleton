@@ -53,7 +53,8 @@ it('seeds shield permissions and super admin access for the admin panel', functi
     $permissions = FilamentShield::getResourcePermissions(UserResource::class);
 
     expect($user->id)->toMatch('/^[0-9a-f-]{36}$/i')
-        ->and($user->hasRole(User::ROLE_SUPER_ADMIN))->toBeTrue();
+        ->and($user->hasRole(User::ROLE_SUPER_ADMIN))->toBeTrue()
+        ->and($user->is_admin)->toBeTrue();
 
     foreach ($permissions as $permission) {
         expect($user->can($permission))->toBeTrue();

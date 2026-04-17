@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42159220c55b19f5c45bf160e5fe3da9",
+    "content-hash": "1064bbe56e2c6d6a6fe9878e556a52e6",
     "packages": [
         {
             "name": "bezhansalleh/filament-plugin-essentials",
@@ -2250,6 +2250,55 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "joserojasrodriguez/filament-delete-guard",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joserojasrodriguez/filament-delete-guard.git",
+                "reference": "24429a3ef4de994b9c3c3e2f7dac1b82499be7a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joserojasrodriguez/filament-delete-guard/zipball/24429a3ef4de994b9c3c3e2f7dac1b82499be7a5",
+                "reference": "24429a3ef4de994b9c3c3e2f7dac1b82499be7a5",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^5.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Joserojasrodriguez\\FilamentDeleteGuard\\FilamentDeleteGuardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Joserojasrodriguez\\FilamentDeleteGuard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Antonio Rojas Rodriguez",
+                    "email": "joseantoniorojasrodriguez11@gmail.com"
+                }
+            ],
+            "description": "Prevent deletion of Eloquent models in Filament with automatic notifications and UI protection.",
+            "support": {
+                "issues": "https://github.com/joserojasrodriguez/filament-delete-guard/issues",
+                "source": "https://github.com/joserojasrodriguez/filament-delete-guard/tree/1.1.0"
+            },
+            "time": "2026-02-26T15:37:26+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

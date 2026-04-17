@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\Role;
 use App\Models\User;
 use Database\Seeders\AdminPanelSeeder;
 use Database\Seeders\ShieldPermissionsSeeder;
@@ -34,6 +35,7 @@ it('lists users in the filament resource table', function (): void {
 
 it('creates users from the filament resource form', function (): void {
     $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $editorRole = Role::factory()->create(['name' => 'editor']);
 
     actingAs($admin);
 
@@ -44,7 +46,7 @@ it('creates users from the filament resource form', function (): void {
             'password' => 'password',
             'password_confirmation' => 'password',
             'is_active' => true,
-            'has_email_authentication' => false,
+            'roles' => [$editorRole->id],
         ])
         ->call('create')
         ->assertHasNoFormErrors()
@@ -52,7 +54,10 @@ it('creates users from the filament resource form', function (): void {
 
     $user = User::query()->where('email', 'uuid-user@example.com')->firstOrFail();
 
-    expect($user->id)->toMatch('/^[0-9a-f-]{36}$/i');
+    expect($user->id)->toMatch('/^[0-9a-f-]{36}$/i')
+        ->and($user->hasRole($editorRole))->toBeTrue()
+        ->and($user->is_admin)->toBeFalse()
+        ->and($user->has_email_authentication)->toBe((bool) config('filament.mfa.email'));
 });
 
 it('validates the required fields in the user form', function (): void {
@@ -66,7 +71,7 @@ it('validates the required fields in the user form', function (): void {
             'email' => null,
             'password' => null,
             'is_active' => null,
-            'has_email_authentication' => null,
+            'roles' => [],
         ])
         ->call('create')
         ->assertHasFormErrors([
@@ -74,15 +79,18 @@ it('validates the required fields in the user form', function (): void {
             'email' => 'required',
             'password' => 'required',
             'is_active' => 'required',
-            'has_email_authentication' => 'required',
+            'roles' => 'required',
         ]);
 });
 
 it('edits users by uuid from the filament resource', function (): void {
     $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $editorRole = Role::factory()->create(['name' => 'editor']);
+    $reviewerRole = Role::factory()->create(['name' => 'reviewer']);
     $user = User::factory()->create([
         'name' => 'Before',
     ]);
+    $user->assignRole($editorRole);
 
     actingAs($admin);
 
@@ -94,7 +102,7 @@ it('edits users by uuid from the filament resource', function (): void {
             'name' => 'After',
             'email' => $user->email,
             'is_active' => $user->is_active,
-            'has_email_authentication' => $user->has_email_authentication,
+            'roles' => [$reviewerRole->id],
         ])
         ->call('save')
         ->assertHasNoFormErrors()
@@ -104,6 +112,9 @@ it('edits users by uuid from the filament resource', function (): void {
         'id' => $user->id,
         'name' => 'After',
     ]);
+
+    expect($user->fresh()->hasRole($reviewerRole))->toBeTrue()
+        ->and($user->fresh()->hasRole($editorRole))->toBeFalse();
 });
 
 it('can search and sort users in the filament resource table', function (): void {
@@ -133,4 +144,23 @@ it('can search and sort users in the filament resource table', function (): void
         ->searchTable(null)
         ->sortTable('created_at', 'desc')
         ->assertCanSeeTableRecords([$thirdUser, $secondUser, $firstUser], true);
+});
+
+it('can filter users by role in the filament resource table', function (): void {
+    $admin = User::query()->where('email', 'admin@example.com')->firstOrFail();
+    $editorRole = Role::factory()->create(['name' => 'editor']);
+    $reviewerRole = Role::factory()->create(['name' => 'reviewer']);
+    $editorUser = User::factory()->create(['name' => 'Editor User']);
+    $reviewerUser = User::factory()->create(['name' => 'Reviewer User']);
+
+    $editorUser->assignRole($editorRole);
+    $reviewerUser->assignRole($reviewerRole);
+
+    actingAs($admin);
+
+    Livewire::test(ListUsers::class)
+        ->assertTableColumnExists('roles.name')
+        ->filterTable('roles', [$editorRole->id])
+        ->assertCanSeeTableRecords([$editorUser])
+        ->assertCanNotSeeTableRecords([$reviewerUser]);
 });

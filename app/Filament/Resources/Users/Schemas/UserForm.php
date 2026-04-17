@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
@@ -26,6 +28,17 @@ class UserForm
                             ->inline()
                             ->boolean()
                             ->required()
+                            ->columnSpan(1),
+                        Hidden::make('has_email_authentication')
+                            ->default((bool) config('filament.mfa.email'))
+                            ->formatStateUsing(fn ($state): bool => (bool) ($state ?? config('filament.mfa.email'))),
+                        Select::make('roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->required()
+                            ->minItems(1)
                             ->columnSpanFull(),
                         TextInput::make('name')
                             ->required()

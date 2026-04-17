@@ -27,6 +27,10 @@ class AdminPanelSeeder extends Seeder
             ],
         );
 
+        $user->forceFill([
+            'is_admin' => true,
+        ])->save();
+
         $role = Role::query()->firstOrCreate([
             'name' => User::ROLE_SUPER_ADMIN,
             'guard_name' => Filament::getCurrentPanel()->getAuthGuard(),
