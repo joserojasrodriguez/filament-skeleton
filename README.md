@@ -1,58 +1,261 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Filament Skeleton
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Skeleton base para arrancar proyectos internos sobre Laravel 13 y Filament 5 con autenticación, administración de usuarios, roles/permisos, observabilidad y utilidades de desarrollo ya preparadas.
 
-## About Laravel
+## Objetivo
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este repositorio sirve como punto de partida para nuevos proyectos que necesiten:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Panel de administración con Filament.
+- Gestión de usuarios desde el primer día.
+- Roles y permisos con Shield.
+- Soporte inicial para localización.
+- Infraestructura preparada para colas, monitorización y logs.
+- Flujo de arranque rápido para empezar a construir encima.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+No es un proyecto de producto final. Es una base para clonar, renombrar y extender.
 
-## Learning Laravel
+## Stack incluido
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP `^8.3`
+- Laravel `^13.0`
+- Filament `^5.0`
+- Filament Shield
+- Filament Developer Logins
+- Filament Delete Guard
+- Filament Expiration Notice
+- Laravel Horizon
+- Laravel Pulse
+- Opcodes Log Viewer
+- Pest
+- Laravel Pint
+- IDE Helper
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Qué trae ya preparado
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Panel de administración
 
-## Agentic Development
+- Panel Filament principal con id `admin`.
+- URL del panel: `/admin`.
+- Login, reset de contraseña y perfil habilitados.
+- Verificación de email configurable.
+- MFA configurable por email y/o app autenticadora.
+- Tema de Filament apuntando a `resources/css/filament/admin/theme.css`.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Usuarios y permisos
+
+- Recurso Filament para usuarios.
+- Modelo `User` con UUIDs.
+- Control de acceso al panel basado en `is_active`.
+- Distinción de administrador de sistema mediante `is_admin`.
+- Protección para evitar borrar usuarios `super_admin`.
+- Roles y permisos con Spatie Permission + Shield.
+- Seeder que genera permisos del panel y crea el super admin inicial.
+
+### Observabilidad y operación
+
+- Horizon incluido para colas.
+- Pulse incluido en el proyecto como base de observabilidad.
+- Log Viewer accesible para administradores de sistema.
+- Enlaces de navegación a Horizon y Logs visibles solo para `is_admin = true`.
+
+### Localización
+
+- Locales soportados: `es` y `en`.
+- Configuración de `filament-localization` ya incluida.
+- Estructura de traducciones configurada como `panel-based`.
+
+### Desarrollo
+
+- Script `composer run setup` para bootstrap inicial.
+- Script `composer run dev` para entorno local con servidor, cola, logs y Vite.
+- Generación automática de helper models tras migraciones en local si `APP_ENABLE_HELPER_MODEL=true`.
+
+## Decisiones de base del skeleton
+
+Estas son las decisiones que este repositorio toma por defecto y que conviene revisar al arrancar un proyecto nuevo:
+
+- Base de datos por defecto: MySQL.
+- Nombre de base de datos de ejemplo: `filament_skeleton`.
+- `SESSION_DRIVER=database`
+- `CACHE_STORE=database`
+- `QUEUE_CONNECTION=database`
+- Redis configurado y recomendado para Horizon.
+- Idioma por defecto de Laravel en `.env.example`: `en`.
+- Idioma por defecto de `filament-localization`: `es`.
+- El usuario administrador inicial se crea por seeder.
+
+## Requisitos
+
+Antes de arrancar el proyecto, asegúrate de tener:
+
+- PHP 8.3 o superior.
+- Composer.
+- Node.js y npm.
+- MySQL corriendo y una base de datos creada.
+- Redis disponible si vas a usar Horizon y parte de la observabilidad como está pensada en este skeleton.
+
+## Arranque rápido
+
+La vía recomendada es:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer run setup
+php artisan db:seed
+composer run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Esto hace lo siguiente:
 
-## Contributing
+- Instala dependencias PHP.
+- Crea `.env` a partir de `.env.example` si no existe.
+- Genera `APP_KEY`.
+- Ejecuta migraciones.
+- Instala dependencias frontend.
+- Compila assets.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Después de eso, el seeder deja listo el acceso inicial al panel.
 
-## Code of Conduct
+## Arranque manual
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Si prefieres hacerlo paso a paso:
 
-## Security Vulnerabilities
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install --ignore-scripts
+npm run build
+php artisan db:seed
+composer run dev
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Acceso inicial
 
-## License
+Después de ejecutar seeders:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Panel: `/admin`
+- Usuario: `admin@example.com`
+- Contraseña: `password`
+
+Ese usuario:
+
+- Tiene el rol `super_admin`.
+- Recibe los permisos generados por Shield.
+- Tiene `is_admin=true`.
+- Tiene `is_active=true`.
+
+Conviene cambiar estas credenciales al iniciar un proyecto real.
+
+## Scripts útiles
+
+```bash
+composer run setup
+composer run dev
+composer run test
+```
+
+### Qué hace `composer run dev`
+
+Levanta en paralelo:
+
+- `php artisan serve`
+- `php artisan queue:listen --tries=1 --timeout=0`
+- `php artisan pail --timeout=0`
+- `npm run dev`
+
+## Seeders incluidos
+
+- `ShieldPermissionsSeeder`: genera permisos para las entidades descubiertas por Shield en el panel `admin`.
+- `AdminPanelSeeder`: crea el usuario admin inicial, el rol `super_admin` y asigna permisos.
+- `DatabaseSeeder`: ejecuta ambos.
+
+## Flujo recomendado para un proyecto nuevo
+
+1. Clonar este repositorio como base.
+2. Cambiar `APP_NAME`, URL, base de datos y credenciales del entorno.
+3. Ejecutar `composer run setup`.
+4. Ejecutar `php artisan db:seed`.
+5. Acceder a `/admin`.
+6. Cambiar la contraseña del admin inicial.
+7. Ajustar branding, tema y navegación del panel.
+8. Añadir recursos, páginas, widgets y políticas del proyecto.
+9. Revisar si se mantiene MySQL/Redis y los drivers por defecto.
+10. Revisar si el proyecto necesita MFA, verificación de email y developer login.
+
+## Configuración relevante
+
+### Filament
+
+En [config/filament.php](/home/nemuru/Code/Own/filament-skeleton/config/filament.php) puedes controlar:
+
+- `DEVELOPER_LOGIN_ENABLED`
+- `FILAMENT_HAS_EMAIL_VERIFICATION`
+- `FILAMENT_MFA_ENABLED`
+- `FILAMENT_MFA_EMAIL`
+- `FILAMENT_MFA_APP`
+- `FILAMENT_MFA_REQUIRED`
+
+### App
+
+En [config/app.php](/home/nemuru/Code/Own/filament-skeleton/config/app.php) existe:
+
+- `APP_ENABLE_HELPER_MODEL`
+
+Si está activo en local, tras migraciones se regeneran helper models para IDE Helper.
+
+### Panel admin
+
+La configuración principal del panel está en [app/Providers/Filament/AdminPanelProvider.php](/home/nemuru/Code/Own/filament-skeleton/app/Providers/Filament/AdminPanelProvider.php).
+
+Ahí están definidos:
+
+- Path `/admin`
+- Plugins del panel
+- Visibilidad de navegación para logs y Horizon
+- MFA
+- Descubrimiento automático de resources, pages y widgets
+
+## Redis, Horizon y Pulse
+
+Este skeleton deja preparada la capa operativa, pero hay una diferencia importante:
+
+- El `.env.example` usa `QUEUE_CONNECTION=database`.
+- Horizon está configurado para trabajar con Redis.
+
+Si el proyecto va a usar Horizon de verdad, debes configurar Redis correctamente y alinear la estrategia de colas del entorno. Documentarlo desde el inicio evita inconsistencias entre desarrollo y despliegue.
+
+Pulse también forma parte del stack base del proyecto. Si el nuevo proyecto va a apoyarse en observabilidad desde el principio, merece la pena decidir pronto cómo se va a exponer y monitorizar en cada entorno.
+
+## Notas sobre seguridad y uso interno
+
+- Este repositorio está pensado como base pública para arrancar proyectos internos.
+- Incluye credenciales por defecto únicamente para acelerar el bootstrap local.
+- No conviene desplegar un entorno real sin rotar credenciales, revisar permisos y ajustar servicios externos.
+
+## Primeras revisiones recomendadas al crear un proyecto
+
+- Renombrar la aplicación y actualizar metadatos.
+- Revisar `.env.example`.
+- Decidir idioma por defecto final del proyecto.
+- Revisar la estrategia de roles/permisos.
+- Revisar si el admin del sistema debe seguir dependiendo de `is_admin`.
+- Decidir si el acceso de desarrollador debe existir en local.
+- Decidir si el proyecto usará MFA obligatorio.
+- Alinear colas entre local, staging y producción.
+
+## Estructura inicial relevante
+
+- [composer.json](/home/nemuru/Code/Own/filament-skeleton/composer.json)
+- [config/app.php](/home/nemuru/Code/Own/filament-skeleton/config/app.php)
+- [config/filament.php](/home/nemuru/Code/Own/filament-skeleton/config/filament.php)
+- [config/filament-shield.php](/home/nemuru/Code/Own/filament-skeleton/config/filament-shield.php)
+- [config/filament-localization.php](/home/nemuru/Code/Own/filament-skeleton/config/filament-localization.php)
+- [app/Providers/Filament/AdminPanelProvider.php](/home/nemuru/Code/Own/filament-skeleton/app/Providers/Filament/AdminPanelProvider.php)
+- [database/seeders/DatabaseSeeder.php](/home/nemuru/Code/Own/filament-skeleton/database/seeders/DatabaseSeeder.php)
+- [app/Filament/Resources/Users/UserResource.php](/home/nemuru/Code/Own/filament-skeleton/app/Filament/Resources/Users/UserResource.php)
+
+## Estado actual del README
+
+Este `README` describe el estado actual del skeleton en este repositorio. Si se añaden nuevos paneles, recursos, seeders o integraciones, conviene actualizarlo al mismo tiempo para que siga siendo útil como documentación de arranque.
