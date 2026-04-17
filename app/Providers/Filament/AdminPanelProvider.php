@@ -73,6 +73,13 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Horizon')
                     ->icon(Heroicon::CpuChip)
                     ->visible(fn (): bool => auth()->user()?->isSystemAdmin() ?? false),
+                NavigationItem::make('Pulse')
+                    ->group('Super Admin')
+                    ->url(fn (): string => url('/pulse'))
+                    ->label('Pulse')
+                    ->icon(Heroicon::ChartBar)
+                    ->visible(fn (): bool => auth()->user()?->isSystemAdmin() ?? false),
+
             ])
             ->middleware([
                 EncryptCookies::class,
