@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'enable_helper_model' => env('APP_ENABLE_HELPER_MODEL', true),
+
 ];
