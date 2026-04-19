@@ -70,12 +70,14 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Horizon')
                     ->group('Super Admin')
                     ->url(fn (): string => route('horizon.index'))
+                    ->openUrlInNewTab()
                     ->label('Horizon')
                     ->icon(Heroicon::CpuChip)
                     ->visible(fn (): bool => auth()->user()?->isSystemAdmin() ?? false),
                 NavigationItem::make('Pulse')
                     ->group('Super Admin')
                     ->url(fn (): string => url('/pulse'))
+                    ->openUrlInNewTab()
                     ->label('Pulse')
                     ->icon(Heroicon::ChartBar)
                     ->visible(fn (): bool => auth()->user()?->isSystemAdmin() ?? false),
