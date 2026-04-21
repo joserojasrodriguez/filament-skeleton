@@ -13,6 +13,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -112,6 +113,17 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function isSystemAdmin(): bool
     {
         return (bool) $this->is_admin;
+    }
+
+    public function scopeVisibleToUser(Builder $query, ?self $user = null): Builder
+    {
+        $user ??= auth()->user();
+
+        if (! $user instanceof self || $user->is_admin) {
+            return $query;
+        }
+
+        return $query->where('is_admin', false);
     }
 
     public function canAccessPanel(Panel $panel): bool
