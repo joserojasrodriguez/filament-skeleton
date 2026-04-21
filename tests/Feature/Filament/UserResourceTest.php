@@ -30,6 +30,7 @@ it('lists users in the filament resource table', function (): void {
 
     Livewire::test(ListUsers::class)
         ->assertSuccessful()
+        ->loadTable()
         ->assertCanSeeTableRecords($users);
 });
 
@@ -138,6 +139,7 @@ it('can search and sort users in the filament resource table', function (): void
     actingAs($admin);
 
     Livewire::test(ListUsers::class)
+        ->loadTable()
         ->searchTable('beta@example.com')
         ->assertCanSeeTableRecords([$secondUser])
         ->assertCanNotSeeTableRecords([$firstUser, $thirdUser])
@@ -159,6 +161,7 @@ it('can filter users by role in the filament resource table', function (): void 
     actingAs($admin);
 
     Livewire::test(ListUsers::class)
+        ->loadTable()
         ->assertTableColumnExists('roles.name')
         ->filterTable('roles', [$editorRole->id])
         ->assertCanSeeTableRecords([$editorUser])
