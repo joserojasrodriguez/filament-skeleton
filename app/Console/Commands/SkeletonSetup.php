@@ -4,12 +4,12 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
 
 class SkeletonSetup extends Command
 {
     // El comando que ejecutaremos
     protected $signature = 'db:skeleton-setup';
+
     protected $description = 'Configura el nombre de la DB en el .env y la crea en MySQL';
 
     public function handle()
@@ -20,6 +20,7 @@ class SkeletonSetup extends Command
 
         if (empty($dbName)) {
             $this->info('Parando el proceso de base de datos');
+
             return 0;
         }
 
@@ -36,7 +37,6 @@ class SkeletonSetup extends Command
             $charset = config('database.connections.mysql.charset', 'utf8mb4');
             $collation = config('database.connections.mysql.collation', 'utf8mb4_unicode_ci');
 
-
             DB::statement("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET $charset COLLATE $collation;");
 
             $this->info("✅ Base de datos '$dbName' creada con éxito.");
@@ -44,21 +44,22 @@ class SkeletonSetup extends Command
             DB::purge('mysql');
             DB::reconnect('mysql');
 
-            $this->info("Ejecutando migraciones...");
+            $this->info('Ejecutando migraciones...');
             $this->call('migrate', [
-                '--force' => true
+                '--force' => true,
             ]);
 
-            $this->info("Poblando base de datos (seeding)...");
+            $this->info('Poblando base de datos (seeding)...');
             $this->call('db:seed', [
-                '--force' => true
+                '--force' => true,
             ]);
 
             config(['database.connections.mysql.database' => $dbName]);
             DB::purge('mysql');
 
         } catch (\Exception $e) {
-            $this->error("Error al crear la base de datos: " . $e->getMessage());
+            $this->error('Error al crear la base de datos: '.$e->getMessage());
+
             return 1;
         }
 
@@ -73,8 +74,8 @@ class SkeletonSetup extends Command
             $oldValue = env($key);
             // Reemplaza la línea exacta de DB_DATABASE
             file_put_contents($path, str_replace(
-                "$key=" . $oldValue,
-                "$key=" . $value,
+                "$key=".$oldValue,
+                "$key=".$value,
                 file_get_contents($path)
             ));
         }
