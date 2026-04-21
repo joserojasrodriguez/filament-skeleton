@@ -54,7 +54,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User permission($permissions, bool $without = false)
  * @method static Builder<static>|User query()
  * @method static Builder<static>|User role($roles, ?string $guard = null, bool $without = false)
- * @method static Builder<static>|User visibleToUser(?\App\Models\User $user = null)
  * @method static Builder<static>|User whereAppAuthenticationRecoveryCodes($value)
  * @method static Builder<static>|User whereAppAuthenticationSecret($value)
  * @method static Builder<static>|User whereCreatedAt($value)
@@ -119,6 +118,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function canAccessPanel(Panel $panel): bool
     {
         return (bool) $this->is_active;
+    }
+
+    public function canImpersonate()
+    {
+        return $this->can('Impersonate:User');
     }
 
     public function customDeletionRules(): void

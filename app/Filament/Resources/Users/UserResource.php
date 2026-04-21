@@ -77,6 +77,8 @@ class UserResource extends Resource
         $query = parent::getEloquentQuery();
 
         if ($user->isSystemAdmin() === false) {
+            return $query;
+
             return $query->where('is_admin', false);
         }
 

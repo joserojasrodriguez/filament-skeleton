@@ -1,5 +1,7 @@
 <?php
 
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+
 return [
 
     /*
@@ -126,7 +128,7 @@ return [
     */
 
     'excluded_resources' => [
-        'RoleResource',
+        RoleResource::class,
     ],
 
     /*

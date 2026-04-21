@@ -16,6 +16,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
@@ -55,7 +56,18 @@ class AdminPanelProvider extends PanelProvider
                 FilamentInfoWidget::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                    ]),
                 FilamentDeveloperLoginsPlugin::make()
                     ->enabled(app()->environment('local') && config('filament.developer_login_enabled'))
                     ->users(fn () => User::pluck('email', 'name')->toArray()),
@@ -94,6 +106,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->maxContentWidth(Width::Full)
             ->authMiddleware([
                 Authenticate::class,
             ]);

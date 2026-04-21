@@ -18,7 +18,8 @@
         "laravel/tinker": "^3.0",
         "marcelweidum/filament-expiration-notice": "^1.0",
         "nunomaduro/essentials": "^1.2",
-        "opcodesio/log-viewer": "^3.24"
+        "opcodesio/log-viewer": "^3.24",
+        "stechstudio/filament-impersonate": "^5.3"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
