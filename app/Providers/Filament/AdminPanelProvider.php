@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\User;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -57,9 +58,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make(),
                 FilamentDeveloperLoginsPlugin::make()
                     ->enabled(app()->environment('local') && config('filament.developer_login_enabled'))
-                    ->users([
-                        'Admin' => 'admin@example.com',
-                    ]),
+                    ->users(fn () => User::pluck('email', 'name')->toArray()),
             ])
             ->navigationItems([
                 NavigationItem::make('Log Viewer')

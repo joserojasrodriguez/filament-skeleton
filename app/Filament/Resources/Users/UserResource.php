@@ -72,7 +72,15 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->visibleToUser();
+        /** @var User $user */
+        $user = auth()->user();
+        $query = parent::getEloquentQuery();
+
+        if ($user->isSystemAdmin() === false) {
+            return $query->where('is_admin', false);
+        }
+
+        return $query;
+
     }
 }

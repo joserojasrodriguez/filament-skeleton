@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
@@ -21,7 +22,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Joserojasrodriguez\FilamentDeleteGuard\Contracts\HasPreventDeletion;
 use Joserojasrodriguez\FilamentDeleteGuard\Exceptions\CannotDeleteModelException;
 use Joserojasrodriguez\FilamentDeleteGuard\Traits\InteractsWithPreventDeletion;
@@ -31,13 +31,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $id
  * @property string $name
  * @property string $email
- * @property Carbon|null $email_verified_at
+ * @property CarbonImmutable|null $email_verified_at
  * @property string $password
  * @property bool $is_active
  * @property bool $is_admin
  * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property string|null $app_authentication_secret
  * @property array<array-key, mixed>|null $app_authentication_recovery_codes
  * @property bool $has_email_authentication
@@ -49,26 +49,27 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $roles_count
  *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User permission($permissions, bool $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User role($roles, ?string $guard = null, bool $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAppAuthenticationRecoveryCodes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAppAuthenticationSecret($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereHasEmailAuthentication($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIsAdmin($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, ?string $guard = null)
+ * @method static Builder<static>|User newModelQuery()
+ * @method static Builder<static>|User newQuery()
+ * @method static Builder<static>|User permission($permissions, bool $without = false)
+ * @method static Builder<static>|User query()
+ * @method static Builder<static>|User role($roles, ?string $guard = null, bool $without = false)
+ * @method static Builder<static>|User visibleToUser(?\App\Models\User $user = null)
+ * @method static Builder<static>|User whereAppAuthenticationRecoveryCodes($value)
+ * @method static Builder<static>|User whereAppAuthenticationSecret($value)
+ * @method static Builder<static>|User whereCreatedAt($value)
+ * @method static Builder<static>|User whereEmail($value)
+ * @method static Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static Builder<static>|User whereHasEmailAuthentication($value)
+ * @method static Builder<static>|User whereId($value)
+ * @method static Builder<static>|User whereIsActive($value)
+ * @method static Builder<static>|User whereIsAdmin($value)
+ * @method static Builder<static>|User whereName($value)
+ * @method static Builder<static>|User wherePassword($value)
+ * @method static Builder<static>|User whereRememberToken($value)
+ * @method static Builder<static>|User whereUpdatedAt($value)
+ * @method static Builder<static>|User withoutPermission($permissions)
+ * @method static Builder<static>|User withoutRole($roles, ?string $guard = null)
  *
  * @mixin \Eloquent
  */
@@ -113,17 +114,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function isSystemAdmin(): bool
     {
         return (bool) $this->is_admin;
-    }
-
-    public function scopeVisibleToUser(Builder $query, ?self $user = null): Builder
-    {
-        $user ??= auth()->user();
-
-        if (! $user instanceof self || $user->is_admin) {
-            return $query;
-        }
-
-        return $query->where('is_admin', false);
     }
 
     public function canAccessPanel(Panel $panel): bool
