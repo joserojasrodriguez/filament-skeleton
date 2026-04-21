@@ -30,9 +30,11 @@ class UserForm
                             ->required()
                             ->columnSpan(1),
                         Hidden::make('has_email_authentication')
+                            ->label(__('filament/admin/user_resource.has_email_authentication'))
                             ->default((bool) config('filament.mfa.email'))
                             ->formatStateUsing(fn ($state): bool => (bool) ($state ?? config('filament.mfa.email'))),
                         Select::make('roles')
+                            ->label(__('filament/admin/user_resource.roles'))
                             ->relationship('roles', 'name')
                             ->multiple()
                             ->preload()
@@ -41,16 +43,17 @@ class UserForm
                             ->minItems(1)
                             ->columnSpanFull(),
                         TextInput::make('name')
+                            ->label(__('filament/admin/user_resource.name'))
                             ->required()
                             ->maxLength(255),
                         TextInput::make('email')
-                            ->label('Email address')
+                            ->label(__('filament/admin/user_resource.email'))
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         TextInput::make('password')
-                            ->label(fn (string $operation): string => $operation === 'create' ? 'Password' : 'New password')
+                            ->label(__('filament/admin/user_resource.password'))
                             ->password()
                             ->revealable(filament()->arePasswordsRevealable())
                             ->autocomplete('new-password')
@@ -61,7 +64,7 @@ class UserForm
                             ->confirmed()
                             ->columnSpan(1),
                         TextInput::make('password_confirmation')
-                            ->label('Confirm password')
+                            ->label(__('filament/admin/user_resource.password_confirmation'))
                             ->password()
                             ->autocomplete('new-password')
                             ->revealable(filament()->arePasswordsRevealable())
@@ -70,7 +73,7 @@ class UserForm
                             ->dehydrated(false)
                             ->columnSpan(1),
                         TextInput::make('current_password')
-                            ->label('Current password')
+                            ->label(__('filament/admin/user_resource.current_password'))
                             ->password()
                             ->autocomplete('current-password')
                             ->currentPassword(guard: Filament::getAuthGuard())

@@ -17,22 +17,26 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('filament/admin/user_resource.name'))
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label(__('filament/admin/user_resource.email'))
                     ->searchable(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(__('filament/admin/user_resource.roles.name'))
                     ->badge()
                     ->separator(', ')
                     ->searchable(),
                 IconColumn::make('is_active')
+                    ->label(__('filament/admin/user_resource.is_active'))
                     ->boolean(),
                 TextColumn::make('created_at')
+                    ->label(__('filament/admin/user_resource.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label(__('filament/admin/user_resource.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
