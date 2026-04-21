@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
     {
         $panel = $panel
             ->default()
+            ->spa()
             ->passwordReset()
             ->profile()
             ->emailVerification(fn (): bool => config('filament.has_email_verification', false))

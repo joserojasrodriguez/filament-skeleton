@@ -23,7 +23,7 @@ class LogViewerProvider extends ServiceProvider
     {
         Gate::define('viewLogViewer', function ($user = null) {
             /** @var User $user */
-            return $user->isSystemAdmin();
+            return $user?->isSystemAdmin() ?? false;
         });
     }
 }
